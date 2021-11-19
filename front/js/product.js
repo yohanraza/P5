@@ -66,7 +66,7 @@ function displayProduits() {
 }
 
 
-class cartproduct {
+class Cartproduct {
   constructor(id, quantity, color){
   this.id = id;
   this.quantity = quantity;
@@ -82,8 +82,8 @@ addToCart.onclick = () => {
   if (localStorage.getItem("cart") !== null) {
     productInCart = JSON.parse(localStorage.getItem("cart"))
   }
+  
+  productInCart.push(new Cartproduct (productId, quantity.value, colors.value))
 
-  productInCart.push(new cartproduct (productId, quantity.value, colors.value))
-
-  localStorage.setItem ("cart", JSON.stringify(productInCart))
+  localStorage.setItem ("cart", JSON.stringify(productInCart)) 
 }
