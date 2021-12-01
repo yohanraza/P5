@@ -83,18 +83,22 @@ addToCart.onclick = () => {
   if (localStorage.getItem("cart") !== null) {
     productInCart = JSON.parse(localStorage.getItem("cart"))
   }
-
+  
   var foundId = false
   var foundColor = false
+  let Newquantity = 0
   for (let product of productInCart) {
     if (product.id == productId) {
       foundId = true
       if (product.color == productOfPage.color) {
         foundColor = true
+        Newquantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
+        product.quantity = Newquantity
+        
       }
     }
   }
-
+  
   if (foundId == true ){
     if (foundColor == true) {
       console.log("ce produit existe")
@@ -105,14 +109,14 @@ addToCart.onclick = () => {
   } else {
     productInCart.push(productOfPage)
   }
-
+  
   console.log(foundId)
   console.log(foundColor)
-
+  
   localStorage.setItem("cart",JSON.stringify(productInCart)) 
-
+  
   console.log(productInCart)
-
+  
   console.log(productOfPage)
-
+  
 }
