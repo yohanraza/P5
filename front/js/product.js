@@ -78,12 +78,41 @@ class Cartproduct {
 
 
 addToCart.onclick = () => {
+  let productOfPage = new Cartproduct (productId, quantity.value, colors.value)
   let  productInCart = []
   if (localStorage.getItem("cart") !== null) {
     productInCart = JSON.parse(localStorage.getItem("cart"))
   }
-  
-  productInCart.push(new Cartproduct (productId, quantity.value, colors.value))
 
-  localStorage.setItem ("cart", JSON.stringify(productInCart)) 
+  var foundId = false
+  var foundColor = false
+  for (let product of productInCart) {
+    if (product.id == productId) {
+      foundId = true
+      if (product.color == productOfPage.color) {
+        foundColor = true
+      }
+    }
+  }
+
+  if (foundId == true ){
+    if (foundColor == true) {
+      console.log("ce produit existe")
+    }
+    else {
+      productInCart.push(productOfPage)
+    }
+  } else {
+    productInCart.push(productOfPage)
+  }
+
+  console.log(foundId)
+  console.log(foundColor)
+
+  localStorage.setItem("cart",JSON.stringify(productInCart)) 
+
+  console.log(productInCart)
+
+  console.log(productOfPage)
+
 }
