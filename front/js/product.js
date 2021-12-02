@@ -59,7 +59,7 @@ function displayProduits() {
     itemImg.innerHTML += `<img src="${produit.imageUrl}" alt="${produit.altTxt}">`
     
     for ( let color of produit.colors) {
-    productColor.innerHTML += `<option value="${color}">${color}</option>`
+      productColor.innerHTML += `<option value="${color}">${color}</option>`
     }
     
   };  
@@ -68,55 +68,65 @@ function displayProduits() {
 
 class Cartproduct {
   constructor(id, quantity, color){
-  this.id = id;
-  this.quantity = quantity;
-  this.color = color;
-}
+    this.id = id;
+    this.quantity = quantity;
+    this.color = color;
+  }
 }
 
 
 
 
 addToCart.onclick = () => {
-  let productOfPage = new Cartproduct (productId, quantity.value, colors.value)
-  let  productInCart = []
-  if (localStorage.getItem("cart") !== null) {
-    productInCart = JSON.parse(localStorage.getItem("cart"))
-  }
-  
-  var foundId = false
-  var foundColor = false
-  let Newquantity = 0
-  for (let product of productInCart) {
-    if (product.id == productId) {
-      foundId = true
-      if (product.color == productOfPage.color) {
-        foundColor = true
-        Newquantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
-        product.quantity = Newquantity
-        
+  const quantitySelected = document.getElementById("quantity")
+  const quantityValidation = quantitySelected.checkValidity()
+  const colorValidation = productColor.checkValidity()
+  console.log(colorValidation)
+  console.log(quantityValidation)
+  if (colorValidation){
+    if (quantityValidation){  
+      let productOfPage = new Cartproduct (productId, quantity.value, colors.value)
+      let  productInCart = []
+      if (localStorage.getItem("cart") !== null) {
+        productInCart = JSON.parse(localStorage.getItem("cart"))
       }
+      
+      var foundId = false
+      var foundColor = false
+      let Newquantity = 0
+      for (let product of productInCart) {
+        if (product.id == productId) {
+          foundId = true
+          if (product.color == productOfPage.color) {
+            foundColor = true
+            Newquantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
+            product.quantity = Newquantity
+            
+          }
+        }
+      }
+      
+      if (foundId == true ){
+        if (foundColor == true) {
+          console.log("ce produit existe")
+        }
+        else {
+          productInCart.push(productOfPage)
+        }
+      } else {
+        productInCart.push(productOfPage)
+      }
+      
+      console.log(foundId)
+      console.log(foundColor)
+      
+      localStorage.setItem("cart",JSON.stringify(productInCart)) 
+      
+      console.log(productInCart)
+      
+      console.log(productOfPage)
     }
+  else {alert("Veuillez selectionner une quantité")}  
   }
-  
-  if (foundId == true ){
-    if (foundColor == true) {
-      console.log("ce produit existe")
-    }
-    else {
-      productInCart.push(productOfPage)
-    }
-  } else {
-    productInCart.push(productOfPage)
-  }
-  
-  console.log(foundId)
-  console.log(foundColor)
-  
-  localStorage.setItem("cart",JSON.stringify(productInCart)) 
-  
-  console.log(productInCart)
-  
-  console.log(productOfPage)
-  
+  else {alert("Veuillez selectionner une couleur")}
 }
