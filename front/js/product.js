@@ -126,7 +126,9 @@ addToCart.onclick = () => {
       
       console.log(productOfPage)
     }
-  else {alert("Veuillez selectionner une quantité")}  
+    else {alert("Veuillez selectionner une quantité")}  
   }
   else {alert("Veuillez selectionner une couleur")}
 }
+
+console.log(produits[0])
