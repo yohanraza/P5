@@ -1,5 +1,4 @@
 let productInCart = []
-let listePanier = []
 productInCart = JSON.parse(localStorage.getItem("cart"))
 
 let cible = document.getElementById("cart__items") 
@@ -24,40 +23,50 @@ function displayProduct() {
         .then(function(value) {
             console.log(value);
             filTheCart(value);
-
+            
         })
         .catch(function(err) {
             // Une erreur est survenue
         });
         
-      
+        
         
         function filTheCart(value) {
             let CartProductPrice = parseInt(product.quantity) * parseInt(value.price)
-            cible.innerHTML += `<article class="cart__item" data-id="${value._id}">
-            <div class="cart__item__img">
-              <img src="${value.imageUrl}" alt="Photographie d'un canapé">
-            </div>
-            <div class="cart__item__content">
-              <div class="cart__item__content__titlePrice">
-                <h2>${value.name}</h2>
-                <p>${CartProductPrice} €</p>
-              </div>
-              <div class="cart__item__content__settings">
-                <div class="cart__item__content__settings__quantity">
-                  <p>Qté : </p>
-                  <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+
+            cible.innerHTML += `
+            <article class="cart__item" data-id="${value._id}">
+                <div class="cart__item__img">
+                    <img src="${value.imageUrl}" alt="Photographie d'un canapé">
+                    </div>
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__titlePrice">
+                        <h2>${value.name}</h2>
+                        <p id = product__color>${product.color}<p>
+                        <p>${CartProductPrice} €</p>
+            
+                    </div>
+                    <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                            <p>Qté : </p>
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                            <p class="deleteItem">Supprimer</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="cart__item__content__settings__delete">
-                  <p class="deleteItem">Supprimer</p>
-                </div>
-              </div>
-            </div>
-          </article>`
+            </article>`
         }
-    
+        
     }
     
     
 }
 
+let f = productInCart.findIndex(x => x.id ==='a6ec5b49bd164d7fbe10f37b6363f9fb' && x.color === 'Brown')
+
+console.log(f)
+
+console.log(productInCart.splice(f,1))
+console.log(productInCart)

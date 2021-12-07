@@ -67,10 +67,15 @@ function displayProduits() {
 
 
 class Cartproduct {
-  constructor(id, quantity, color){
+  constructor(id, quantity, color, imageUrl, price, name){
     this.id = id;
     this.quantity = quantity;
     this.color = color;
+    this.imageUrl= imageUrl;
+    this.price = price;
+    this.name = name;
+
+
   }
 }
 
@@ -85,7 +90,7 @@ addToCart.onclick = () => {
   console.log(quantityValidation)
   if (colorValidation){
     if (quantityValidation){  
-      let productOfPage = new Cartproduct (productId, quantity.value, colors.value)
+      let productOfPage = new Cartproduct (productId, quantity.value, colors.value, produits[0].imageUrl, produits[0].price, produits[0].name)
       let  productInCart = []
       if (localStorage.getItem("cart") !== null) {
         productInCart = JSON.parse(localStorage.getItem("cart"))
