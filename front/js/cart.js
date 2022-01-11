@@ -4,58 +4,39 @@ productInCart = JSON.parse(localStorage.getItem("cart"))
 let cible = document.getElementById("cart__items") 
 displayProduct()
 
-
+console.log(productInCart)
 function displayProduct() {
     
     for (let product of productInCart) {
-        let apiUrl = ("http://localhost:3000/api/products/");
-        
-        let fetchUrl = apiUrl + product.id;
         
         
+        filTheCart();
         
-        fetch (fetchUrl)
-        .then(function(res) {
-            if (res.ok) {
-                return res.json();
-            }
-        })
-        .then(function(value) {
-            console.log(value);
-            filTheCart(value);
+        function filTheCart() {
+            let CartProductPrice = parseInt(product.quantity) * parseInt(product.price)
             
-        })
-        .catch(function(err) {
-            // Une erreur est survenue
-        });
-        
-        
-        
-        function filTheCart(value) {
-            let CartProductPrice = parseInt(product.quantity) * parseInt(value.price)
-
             cible.innerHTML += `
-            <article class="cart__item" data-id="${value._id}">
-                <div class="cart__item__img">
-                    <img src="${value.imageUrl}" alt="Photographie d'un canapé">
-                    </div>
-                    <div class="cart__item__content">
-                        <div class="cart__item__content__titlePrice">
-                        <h2>${value.name}</h2>
-                        <p id = product__color>${product.color}<p>
-                        <p>${CartProductPrice} €</p>
+            <article class="cart__item" data-id="${product.id}" data-color="${product.color}" >
+            <div class="cart__item__img">
+            <img src="${product.imageUrl}" alt="Photographie d'un canapé">
+            </div>
+            <div class="cart__item__content">
+            <div class="cart__item__content__titlePrice">
+            <h2>${product.name}</h2>
+            <p id ="product__color">${product.color}<p>
+            <p>${CartProductPrice} €</p>
             
-                    </div>
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p>Qté : </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
-                        </div>
-                        <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem">Supprimer</p>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+            <p>Qté : </p>
+            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+            </div>
+            <div class="cart__item__content__settings__delete">
+            <p class="deleteItem">Supprimer</p>
+            </div>
+            </div>
+            </div>
             </article>`
         }
         
@@ -64,9 +45,37 @@ function displayProduct() {
     
 }
 
-let f = productInCart.findIndex(x => x.id ==='a6ec5b49bd164d7fbe10f37b6363f9fb' && x.color === 'Brown')
 
-console.log(f)
 
-console.log(productInCart.splice(f,1))
+//console.log(productInCart.splice(f,1))
 console.log(productInCart)
+
+
+function delItem () {
+    let delBtn = document.getElementsByClassName("deleteItem")
+
+
+    console.log(delBtn)
+    
+    for (let btn of delBtn) {
+        
+        
+        btn.addEventListener("click", function () {
+            let removeElt = btn.closest("article")
+            removeElt.remove()
+            let removeEltId = removeElt.dataset.id
+            console.log(removeEltId)
+            let removeEltColor = removeElt.dataset.color
+            console.log(removeEltColor)
+            let removeEltIndex = productInCart.findIndex(x => x.id ===removeEltId && x.color === removeEltColor)
+            productInCart.splice(removeEltIndex,1)
+            localStorage.setItem("cart",JSON.stringify(productInCart))
+            console.log(productInCart)
+             
+        })        
+    }
+    
+    
+    
+}
+delItem();
