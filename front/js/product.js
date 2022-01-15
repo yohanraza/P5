@@ -74,8 +74,8 @@ class Cartproduct {
     this.imageUrl= imageUrl;
     this.price = price;
     this.name = name;
-
-
+    
+    
   }
 }
 
@@ -118,7 +118,8 @@ addToCart.onclick = () => {
         else {
           productInCart.push(productOfPage)
         }
-      } else {
+      } 
+      else {
         productInCart.push(productOfPage)
       }
       
@@ -136,4 +137,4 @@ addToCart.onclick = () => {
   else {alert("Veuillez selectionner une couleur")}
 }
 
-console.log(produits[0])
+

@@ -79,3 +79,23 @@ function delItem () {
     
 }
 delItem();
+
+let itemQuantity = document.getElementsByClassName("itemQuantity")
+
+for (let changeBtn of itemQuantity){
+changeBtn.addEventListener('change', quantityChange);
+
+function quantityChange (e) {
+    let quantityChangeElt = changeBtn.closest("article")
+    let quantityChangeEltColor = quantityChangeElt.dataset.color
+    let quantityChangeEltId = quantityChangeElt.dataset.id
+    let quantityChangeEltIndex = productInCart.findIndex(x => x.id === quantityChangeEltId && x.color === quantityChangeEltColor)
+    productInCart[quantityChangeEltIndex].quantity = e.target.value;
+    localStorage.setItem('cart', JSON.stringify(productInCart))
+}
+}
+
+
+
+//productInCart[1].quantity = parseInt(10);
+//localStorage.setItem("cart", JSON.stringify(productInCart));
