@@ -43,7 +43,6 @@ function displayProduits() {
   for (let produit of produits) {
     urlProduit.searchParams.set('id',produit._id)
     cible.innerHTML += `
-
     <a href=${urlProduit}>
     <article>
     <img src=${produit.imageUrl} alt=${produit.altTxt}>
