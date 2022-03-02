@@ -34,6 +34,7 @@ class Kanap {
   }
 }
 
+// fonction permettant de traiter la reponse reçu par le fetch
 function getProduits(value) {
   produits.push (new Kanap(value._id, value.name, value.price, value.description, value.imageUrl, value.colors, value.altTxt))
   displayProduits();
@@ -48,6 +49,7 @@ let productDescription = document.getElementById("description")
 let productColor = document.getElementById("colors")
 let productPrice = document.getElementById("price")
 
+// fonction permettant d'afficher le produit sur la page 
 function displayProduits() {
   
   for (let produit of produits) {
@@ -67,7 +69,7 @@ function displayProduits() {
 
 
 class Cartproduct {
-  constructor(id, quantity, color, imageUrl, price, name){
+  constructor(id, quantity, color, imageUrl, name){
     this.id = id;
     this.quantity = quantity;
     this.color = color;
@@ -80,7 +82,7 @@ class Cartproduct {
 
 
 
-
+// fonction permettant d'ajouter le produit dans le panier donc le stocker sur le local storage
 addToCart.onclick = () => {
   const quantitySelected = document.getElementById("quantity")
   const quantityValidation = quantitySelected.checkValidity()
