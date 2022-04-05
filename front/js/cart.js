@@ -5,6 +5,7 @@ productInCart = JSON.parse(localStorage.getItem("cart"))
 let cible = document.getElementById("cart__items") 
 displayProduct()
 
+
 console.log(productInCart)
 
 
@@ -13,14 +14,17 @@ console.log(productInCart)
 
 let cartArticles = document.getElementsByClassName("cart__item__content__titlePrice")
 console.log(cartArticles)
-
 displayPrice()
+
 
 async function displayPrice () {
     for (let article of cartArticles) {
         let priceId = article.closest("article").dataset.id;
         let priceColor = article.closest("article").dataset.color;
         let fetchUrl = apiUrl + priceId
+        let mainArticle = article.closest("article")
+        let priceSelector = mainArticle.querySelector(".cart__item__content__titlePrice__price")
+        console.log(priceSelector)
         let articleIndex = productInCart.findIndex(x => x.id ===priceId && x.color === priceColor)
         const response = await fetch(fetchUrl)
         if (response.ok){
@@ -30,7 +34,7 @@ async function displayPrice () {
             cartPriceList.push(totalPrice)
             console.log(totalPrice)
             console.log(value.price)
-            article.innerHTML+= `<p>${totalPrice}</p>`
+            priceSelector.innerHTML = `<p>${totalPrice}</p>`
         }
         console.log(priceId)
         console.log(fetchUrl)
@@ -42,10 +46,13 @@ async function displayPrice () {
 
 // Fonction permettant d'afficher la liste de produit du pannier 
 function displayProduct() {
-    
+    if(productInCart == null ) {
+        cible.innerHTML+='<p>Votre pannier est vide </p>'
+    }
+    else {
     for (let product of productInCart) {
         
-        
+    
         filTheCart();
         
         function filTheCart() {
@@ -59,6 +66,7 @@ function displayProduct() {
             <div class="cart__item__content__titlePrice">
             <h2>${product.name}</h2>
             <p>${product.color}</p>
+            <p class="cart__item__content__titlePrice__price"><p>
             
             </div>
             <div class="cart__item__content__settings">
@@ -75,6 +83,7 @@ function displayProduct() {
         }
         
     }
+}
     
     
 }
@@ -162,8 +171,10 @@ for (let changeBtn of itemQuantity){
         
         let totalPrice = document.getElementsByClassName("cart__item__content__titlePrice")
         let itemTotalPrice = totalPrice.lastChild
+        displayPrice()
         console.log(totalPrice)
         console.log(itemTotalPrice) 
+        //location.reload()
     }
 }
 
@@ -260,10 +271,28 @@ function send(orderToSend) {
 
     .then(function(serverResponse) {
         console.log(serverResponse);
+        saveOrderId(serverResponse)
         //storeOrderId(serverResponse); 
     })
 
     .catch(function(err) {
         console.error('Erreur lors de la requête : ', err);
     });
+}
+
+
+function saveOrderId (value) {
+    let urlConf = new URL('C:/Users/Yohann/Desktop/P5/P5-Dev-Web-Kanap-master/front/html/confirmation.html')
+    urlConf.searchParams.set('orderId', value.orderId)
+    window.location = urlConf
+    productInCart = []
+    localStorage.setItem('cart', JSON.stringify(productInCart))
+    
+   
+}
+
+function displayOrderId (value) {
+    let cible = document.getElementById("orderId")
+    cible.innerHTML+= `${value.orderId}`
+    console.log(value)
 }
