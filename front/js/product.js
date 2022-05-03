@@ -124,14 +124,14 @@ addToCart.onclick = () => {
         productInCart.push(productOfPage)
       }
       
-      console.log(foundId)
-      console.log(foundColor)
+      //console.log(foundId)
+      //console.log(foundColor)
       
       localStorage.setItem("cart",JSON.stringify(productInCart)) 
       
-      console.log(productInCart)
+      //console.log(productInCart)
       
-      console.log(productOfPage)
+      //console.log(productOfPage)
     }
     else {alert("Veuillez selectionner une quantité")}  
   }

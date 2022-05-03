@@ -36,7 +36,11 @@ let produits = []
 
 cible = document.getElementById("items")
 
-let urlProduit = new URL('C:/Users/Yohann/Desktop/P5/P5-Dev-Web-Kanap-master/front/html/product.html')
+
+
+let urlENcoded = encodeURI(document.location.href)
+urlENcoded = urlENcoded.replace('index', 'product')
+let urlProduit = new URL(urlENcoded)
 
 function displayProduits() {
   

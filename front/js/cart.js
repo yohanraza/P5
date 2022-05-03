@@ -46,44 +46,44 @@ async function displayPrice () {
 
 // Fonction permettant d'afficher la liste de produit du pannier 
 function displayProduct() {
-    if(productInCart == null ) {
+    if(productInCart === null || productInCart.length < 1 ) {
         cible.innerHTML+='<p>Votre pannier est vide </p>'
     }
     else {
-    for (let product of productInCart) {
-        
-    
-        filTheCart();
-        
-        function filTheCart() {
+        for (let product of productInCart) {
             
-            cible.innerHTML += `
-            <article class="cart__item" data-id="${product.id}" data-color="${product.color}" >
-            <div class="cart__item__img">
-            <img src="${product.imageUrl}" alt="Photographie d'un canapé">
-            </div>
-            <div class="cart__item__content">
-            <div class="cart__item__content__titlePrice">
-            <h2>${product.name}</h2>
-            <p>${product.color}</p>
-            <p class="cart__item__content__titlePrice__price"><p>
             
-            </div>
-            <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-            <p>Qté : </p>
-            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
-            </div>
-            <div class="cart__item__content__settings__delete">
-            <p class="deleteItem">Supprimer</p>
-            </div>
-            </div>
-            </div>
-            </article>`
+            filTheCart();
+            
+            function filTheCart() {
+                
+                cible.innerHTML += `
+                <article class="cart__item" data-id="${product.id}" data-color="${product.color}" >
+                <div class="cart__item__img">
+                <img src="${product.imageUrl}" alt="Photographie d'un canapé">
+                </div>
+                <div class="cart__item__content">
+                <div class="cart__item__content__titlePrice">
+                <h2>${product.name}</h2>
+                <p>${product.color}</p>
+                <p class="cart__item__content__titlePrice__price"><p>
+                
+                </div>
+                <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                <p>Qté : </p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
+                </div>
+                <div class="cart__item__content__settings__delete">
+                <p class="deleteItem">Supprimer</p>
+                </div>
+                </div>
+                </div>
+                </article>`
+            }
+            
         }
-        
     }
-}
     
     
 }
@@ -91,7 +91,10 @@ function displayProduct() {
 let cartTotalQuantity = 0
 let cartTotalPrice = 0
 let cartPriceList = []
+// Fonction permettant d'afficher la quantité de produit totale dans le pannier
+
 function CartTotalQuantity () {
+    let cartTotalQuantity = 0
     for (let i=0 ; i< productInCart.length; i++ ) {
         cartTotalQuantity += parseInt(productInCart[i].quantity);
     }
@@ -106,23 +109,25 @@ function CartTotalQuantity () {
 }
 
 async function displayCartTotalPrice() {
-    const res = await displayPrice()
-    //if (res.ok) {
-    //    const response = await res.json()
-    //}
     
-    console.log(response)
-    for (let i=0 ; i< cartPriceList.length; i++ ){
-        cartTotalQuantity += parseInt(cartPriceList[i])
-        //cartTotalQuantity += parseInt(price)
-        //console.log(cartTotalPrice)
+    let cartTotalPrice = 0
+    let totalPrice = document.getElementById("totalPrice")
+    for (let product of productInCart) {
+        let fetchUrl = apiUrl + product.id
+        console.log(product.id)
+        const response = await fetch(fetchUrl)
+        if (response.ok) {
+            const value = await response.json()
+            cartTotalPrice += parseInt(value.price)*parseInt(product.quantity)
+            totalPrice.innerHTML = cartTotalPrice
+            console.log(cartTotalPrice)
+            console.log(product.quantity)
+            console.log(value.price)
+        }
     }
-    console.log(cartTotalPrice)
-    /*
-    let totalPrice = document.getElementById("totalPrice");
-    totalPrice.innerHTML = cartTotalPrice;*/
 }
-//displayCartTotalPrice();
+
+displayCartTotalPrice();
 CartTotalQuantity();
 
 //console.log(productInCart.splice(f,1))
@@ -149,9 +154,12 @@ function delItem () {
             productInCart.splice(removeEltIndex,1)
             localStorage.setItem("cart",JSON.stringify(productInCart))
             console.log(productInCart)
-            
-        })        
+            displayCartTotalPrice();
+            CartTotalQuantity();
+        }) 
+             
     }
+
 }
 delItem();
 
@@ -160,7 +168,7 @@ let itemQuantity = document.getElementsByClassName("itemQuantity")
 // Boucle for pour selectionner chaque bouton "quantité" du panier
 for (let changeBtn of itemQuantity){
     changeBtn.addEventListener('change', quantityChange);
-// Fonction permettant de mettre à jour la quantité dans local storage    
+    // Fonction permettant de mettre à jour la quantité dans local storage    
     function quantityChange (e) {
         let quantityChangeElt = changeBtn.closest("article")
         let quantityChangeEltColor = quantityChangeElt.dataset.color
@@ -172,6 +180,8 @@ for (let changeBtn of itemQuantity){
         let totalPrice = document.getElementsByClassName("cart__item__content__titlePrice")
         let itemTotalPrice = totalPrice.lastChild
         displayPrice()
+        displayCartTotalPrice();
+        CartTotalQuantity();
         console.log(totalPrice)
         console.log(itemTotalPrice) 
         //location.reload()
@@ -255,40 +265,40 @@ function orderToSend(contact, products) {
 // fonction permettant d'envoyer la commande 
 function send(orderToSend) {
     fetch('http://localhost:3000/api/products/order', {
-        method : "POST",
-        headers : {
-            'Accept' : 'application/json',
-            'Content-type' : 'application/json',
-        },
-        body : JSON.stringify(orderToSend)
-    })
+    method : "POST",
+    headers : {
+        'Accept' : 'application/json',
+        'Content-type' : 'application/json',
+    },
+    body : JSON.stringify(orderToSend)
+})
 
-    .then(function(response) {
-        if (response.ok) {
-            return response.json(); 
-        }
-    })
+.then(function(response) {
+    if (response.ok) {
+        return response.json(); 
+    }
+})
 
-    .then(function(serverResponse) {
-        console.log(serverResponse);
-        saveOrderId(serverResponse)
-        //storeOrderId(serverResponse); 
-    })
+.then(function(serverResponse) {
+    console.log(serverResponse);
+    saveOrderId(serverResponse)
+    //storeOrderId(serverResponse); 
+})
 
-    .catch(function(err) {
-        console.error('Erreur lors de la requête : ', err);
-    });
+.catch(function(err) {
+    console.error('Erreur lors de la requête : ', err);
+});
 }
 
 
 function saveOrderId (value) {
-    let urlConf = new URL('C:/Users/Yohann/Desktop/P5/P5-Dev-Web-Kanap-master/front/html/confirmation.html')
+    let urlEncoded = encodeURI(document.location.href)
+    urlEncoded = urlEncoded.replace('cart', 'confirmation') 
+    let urlConf = new URL(urlEncoded)
     urlConf.searchParams.set('orderId', value.orderId)
     window.location = urlConf
     productInCart = []
-    localStorage.setItem('cart', JSON.stringify(productInCart))
-    
-   
+    localStorage.setItem('cart', JSON.stringify(productInCart))   
 }
 
 function displayOrderId (value) {
