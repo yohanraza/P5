@@ -13,7 +13,7 @@ console.log(productInCart)
 
 
 let cartArticles = document.getElementsByClassName("cart__item__content__titlePrice")
-console.log(cartArticles)
+//console.log(cartArticles)
 displayPrice()
 
 
@@ -24,7 +24,7 @@ async function displayPrice () {
         let fetchUrl = apiUrl + priceId
         let mainArticle = article.closest("article")
         let priceSelector = mainArticle.querySelector(".cart__item__content__titlePrice__price")
-        console.log(priceSelector)
+        //console.log(priceSelector)
         let articleIndex = productInCart.findIndex(x => x.id ===priceId && x.color === priceColor)
         const response = await fetch(fetchUrl)
         if (response.ok){
@@ -32,12 +32,12 @@ async function displayPrice () {
             let price = value.price
             let totalPrice = parseInt(productInCart[articleIndex].quantity) * parseInt(price)
             cartPriceList.push(totalPrice)
-            console.log(totalPrice)
-            console.log(value.price)
+            //console.log(totalPrice)
+            //console.log(value.price)
             priceSelector.innerHTML = `<p>${totalPrice}</p>`
         }
-        console.log(priceId)
-        console.log(fetchUrl)
+        //console.log(priceId)
+        //console.log(fetchUrl)
         
         
     }
@@ -114,15 +114,15 @@ async function displayCartTotalPrice() {
     let totalPrice = document.getElementById("totalPrice")
     for (let product of productInCart) {
         let fetchUrl = apiUrl + product.id
-        console.log(product.id)
+        //console.log(product.id)
         const response = await fetch(fetchUrl)
         if (response.ok) {
             const value = await response.json()
             cartTotalPrice += parseInt(value.price)*parseInt(product.quantity)
             totalPrice.innerHTML = cartTotalPrice
-            console.log(cartTotalPrice)
-            console.log(product.quantity)
-            console.log(value.price)
+            //console.log(cartTotalPrice)
+            //console.log(product.quantity)
+            //console.log(value.price)
         }
     }
 }
@@ -131,7 +131,7 @@ displayCartTotalPrice();
 CartTotalQuantity();
 
 //console.log(productInCart.splice(f,1))
-console.log(productInCart)
+//console.log(productInCart)
 
 // fonction permettant de supprimer les articles du pannier
 function delItem () {
@@ -147,13 +147,13 @@ function delItem () {
             let removeElt = btn.closest("article")
             removeElt.remove()
             let removeEltId = removeElt.dataset.id
-            console.log(removeEltId)
+            //console.log(removeEltId)
             let removeEltColor = removeElt.dataset.color
-            console.log(removeEltColor)
+            //console.log(removeEltColor)
             let removeEltIndex = productInCart.findIndex(x => x.id ===removeEltId && x.color === removeEltColor)
             productInCart.splice(removeEltIndex,1)
             localStorage.setItem("cart",JSON.stringify(productInCart))
-            console.log(productInCart)
+            //console.log(productInCart)
             displayCartTotalPrice();
             CartTotalQuantity();
         }) 
@@ -182,9 +182,8 @@ for (let changeBtn of itemQuantity){
         displayPrice()
         displayCartTotalPrice();
         CartTotalQuantity();
-        console.log(totalPrice)
-        console.log(itemTotalPrice) 
-        //location.reload()
+        //console.log(totalPrice)
+        //console.log(itemTotalPrice) 
     }
 }
 
@@ -226,7 +225,7 @@ function submitOrder () {
         
         let contact = new contactToSend(firstName.value, lastName.value, address.value, city.value, email.value)
         let products = []
-        console.log(contact);
+        //console.log(contact);
         cartStringIdList(products);
         orderToSend(contact, products);
         //send(order);
@@ -246,7 +245,7 @@ function cartStringIdList(value) {
         let productId = product.id;
         value.push(productId)
     }
-    console.log(value)
+    //console.log(value)
 }
 
 // fonction permettant de creer l'objet à envoyer (les éléments de contact + Array contenant les Id)
@@ -304,5 +303,5 @@ function saveOrderId (value) {
 function displayOrderId (value) {
     let cible = document.getElementById("orderId")
     cible.innerHTML+= `${value.orderId}`
-    console.log(value)
+    //console.log(value)
 }

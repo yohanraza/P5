@@ -15,7 +15,7 @@ fetch (fetchUrl)
   }
 })
 .then(function(value) {
-  console.log(value);
+  //console.log(value);
   getProduits(value);
 })
 .catch(function(err) {
