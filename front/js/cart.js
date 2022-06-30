@@ -1,5 +1,7 @@
 let apiUrl = ("http://localhost:3000/api/products/");
 let productInCart = []
+
+//récupération de la liste des produit du panier stockée dans le localstorage
 productInCart = JSON.parse(localStorage.getItem("cart"))
 
 let cible = document.getElementById("cart__items") 
@@ -42,9 +44,8 @@ async function displayPrice () {
         
     }
 }
-//fin draft
 
-// Fonction permettant d'afficher la liste de produits du pannier 
+// Fonction permettant d'afficher dans la page la liste de produits du panier 
 function displayProduct() {
     if(productInCart === null || productInCart.length < 1 ) {
         cible.innerHTML+='<p>Votre pannier est vide </p>'
@@ -60,7 +61,7 @@ function displayProduct() {
                 cible.innerHTML += `
                 <article class="cart__item" data-id="${product.id}" data-color="${product.color}" >
                 <div class="cart__item__img">
-                <img src="${product.imageUrl}" alt="Photographie d'un canapé">
+                <img src="${product.imageUrl}" alt="${product.altTxt}">
                 </div>
                 <div class="cart__item__content">
                 <div class="cart__item__content__titlePrice">
@@ -88,8 +89,8 @@ function displayProduct() {
     
 }
 
-let cartTotalQuantity = 0
-let cartTotalPrice = 0
+//let cartTotalQuantity = 0
+//let cartTotalPrice = 0
 let cartPriceList = []
 
 
@@ -101,7 +102,7 @@ function CartTotalQuantity () {
         cartTotalQuantity += parseInt(productInCart[i].quantity);
     }
     
-    console.log(cartTotalQuantity)
+    //console.log(cartTotalQuantity)
     
     let totalQuantity = document.getElementById("totalQuantity")
     
@@ -175,14 +176,13 @@ for (let changeBtn of itemQuantity){
         let quantityChangeElt = changeBtn.closest("article")
         let quantityChangeEltColor = quantityChangeElt.dataset.color
         let quantityChangeEltId = quantityChangeElt.dataset.id
-        let quantityChangeEltIndex = productInCart.findIndex(x => x.id === quantityChangeEltId && x.color === quantityChangeEltColor)
+        let quantityChangeEltIndex = productInCart.findIndex(x => x.id === quantityChangeEltId && x.color === quantityChangeEltColor) 
         console.log(e.target.value)
-        if (e.target.value <= 100 && e.target.value >= 1){
-            productInCart[quantityChangeEltIndex].quantity = e.target.value;
+        if (e.target.value <= 100 && e.target.value >= 1){ // Vérification si la quantitée est bien comprise entre 1 et 100 dans la page panier
+            productInCart[quantityChangeEltIndex].quantity = e.target.value; // si oui la quantité du produit est mise à jour
             localStorage.setItem('cart', JSON.stringify(productInCart))
             
             let totalPrice = document.getElementsByClassName("cart__item__content__titlePrice")
-            let itemTotalPrice = totalPrice.lastChild
             displayPrice()
             displayCartTotalPrice();
             CartTotalQuantity();
@@ -202,8 +202,6 @@ for (let changeBtn of itemQuantity){
 
 
 
-//productInCart[1].quantity = parseInt(10);
-//localStorage.setItem("cart", JSON.stringify(productInCart));
 
 let firstName = document.getElementById("firstName");
 let lastName = document.getElementById("lastName");
@@ -226,67 +224,70 @@ function submitOrder () {
     let cityValue = city.value;
     let emailValue = email.value;
     
-    if(firstNameValue.match(regex1)){
-    
-        if(lastNameValue.match(regex1)){
+    if(productInCart.length == 0) {  // verification que le panier n'est pas vide
+        alert("votre panier est vide")
+    }
+    else {
+        if(firstNameValue.match(regex1)){
             
-            if( addressValue.match(regexAdress)){
+            if(lastNameValue.match(regex1)){
                 
-                if (cityValue.match(regex1)) {
+                if( addressValue.match(regexAdress)){
                     
-                    if(emailValue.match(regexEmail)){
-                        class contactToSend {
-                            constructor(firstName, lastName, address, city, email){
-                                this.firstName = firstName;
-                                this.lastName = lastName;
-                                this.address = address;
-                                this.city = city; 
-                                this.email = email;
-                            }
-                        }
+                    if (cityValue.match(regex1)) {
                         
-                        let contact = new contactToSend(firstName.value, lastName.value, address.value, city.value, email.value)
-                        let products = []
-                        //console.log(contact);
-                        cartStringIdList(products);
-                        orderToSend(contact, products);
-                        //send(order);
-                        //fonction submit request post et blablabla
-                        alert("commande envoyé")    
+                        if(emailValue.match(regexEmail)){
+                            class contactToSend {
+                                constructor(firstName, lastName, address, city, email){
+                                    this.firstName = firstName;
+                                    this.lastName = lastName;
+                                    this.address = address;
+                                    this.city = city; 
+                                    this.email = email;
+                                }
+                            }
+                            
+                            let contact = new contactToSend(firstName.value, lastName.value, address.value, city.value, email.value) // création de l'objet contact
+                            let products = []
+                            //console.log(contact);
+                            cartStringIdList(products); // création de la liste des id des produits commandé
+                            orderToSend(contact, products); // fonction permettant d'envoyer la commande
+                            alert("commande envoyé")    
+                        }
+                        else {
+                            let alertEmail = document.getElementById("emailErrorMsg")
+                            alertEmail.innerHTML = 'Veuillez remplir le mail correctement' // en cas d'erreur une alerte s'affiche temporairement
+                            setTimeout(()=> {alertEmail.innerHTML ="" }, 1500) // affiche l'alerte d'erreur temporairement (1,5 s)
+                        }
                     }
                     else {
-                        let alertEmail = document.getElementById("emailErrorMsg")
-                        alertEmail.innerHTML = 'Veuillez remplir le mail correctement'
-                        setTimeout(()=> {alertEmail.innerHTML ="" }, 1500)
+                        let alertCity = document.getElementById("cityErrorMsg")
+                        alertCity.innerHTML = 'Veuillez remplir la ville correctement'
+                        setTimeout(()=> {alertCity.innerHTML ="" }, 1500)
                     }
+                    
                 }
                 else {
-                    let alertCity = document.getElementById("cityErrorMsg")
-                    alertCity.innerHTML = 'Veuillez remplir la ville correctement'
-                    setTimeout(()=> {alertCity.innerHTML ="" }, 1500)
+                    let alertAdress = document.getElementById("addressErrorMsg")
+                    alertAdress.innerHTML = `Veuillez remplir l'adresse correctement`
+                    setTimeout(()=> {alertAdress.innerHTML ="" }, 1500)
                 }
-                
             }
             else {
-                let alertAdress = document.getElementById("addressErrorMsg")
-                alertAdress.innerHTML = `Veuillez remplir l'adresse correctement`
-                setTimeout(()=> {alertAdress.innerHTML ="" }, 1500)
+                let alertLastName = document.getElementById("lastNameErrorMsg")
+                alertLastName.innerHTML = 'Veuillez remplir le Nom correctement'
+                setTimeout(()=> {alertLastName.innerHTML ="" }, 1500)
             }
-        }
-        else {
-            let alertLastName = document.getElementById("lastNameErrorMsg")
-            alertLastName.innerHTML = 'Veuillez remplir le Nom correctement'
-            setTimeout(()=> {alertLastName.innerHTML ="" }, 1500)
+            
         }
         
-    }
-    
-    else {
-        let alertFirstName = document.getElementById("firstNameErrorMsg")
-        alertFirstName.innerHTML = 'Veuillez remplir le prénom correctement'
-        setTimeout(()=> {alertFirstName.innerHTML ="" }, 1500)
-        //setTimeout permet d'enlever l'alerte d'erreur au bout de 1,5 secondes
-
+        else {
+            let alertFirstName = document.getElementById("firstNameErrorMsg")
+            alertFirstName.innerHTML = 'Veuillez remplir le prénom correctement'
+            setTimeout(()=> {alertFirstName.innerHTML ="" }, 1500)
+            //setTimeout permet d'enlever l'alerte d'erreur au bout de 1,5 secondes
+            
+        }
     }
 }
 
@@ -308,8 +309,6 @@ function orderToSend(contact, products) {
         products
     }
     //console.log(orderToSend)
-    //let banane = JSON.stringify(orderToSend)
-    //console.log(banane)
     send(orderToSend)
     //sendOrder(orderToSend)
 }
@@ -342,7 +341,7 @@ function send(orderToSend) {
 });
 }
 
-
+//fonction permettant d'envoyer le orderId en paramètres dans l'URL de la page de confirmation
 function saveOrderId (value) {
     let urlEncoded = encodeURI(document.location.href)
     urlEncoded = urlEncoded.replace('cart', 'confirmation') 

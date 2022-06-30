@@ -22,6 +22,7 @@ fetch (fetchUrl)
   // Une erreur est survenue
 });
 
+// Création de la classe Kanap pour permettre de creer le produit et de l'afficher
 class Kanap {
   constructor(_id, name, price, description, imageUrl, colors, altTxt){
     this._id = _id;
@@ -34,7 +35,7 @@ class Kanap {
   }
 }
 
-// fonction permettant de traiter la reponse reçu par le fetch
+// fonction permettant de traiter la reponse reçu par le fetch avec lequel est créé le produit dans le array produits
 function getProduits(value) {
   produits.push (new Kanap(value._id, value.name, value.price, value.description, value.imageUrl, value.colors, value.altTxt))
   displayProduits();
@@ -49,9 +50,10 @@ let productDescription = document.getElementById("description")
 let productColor = document.getElementById("colors")
 let productPrice = document.getElementById("price")
 
-// fonction permettant d'afficher le produit sur la page 
+// fonction permettant d'afficher le produit sur la page  
 function displayProduits() {
-  
+
+// Affichage du produit sur la page à partir de chaque éléments dans produits   
   for (let produit of produits) {
     title.innerHTML += `
     ${produit.name}`
@@ -68,13 +70,15 @@ function displayProduits() {
 }
 
 
+// création d'une nouvelle classe Cartproduct pour stocker les produit du pannier dans le localStorage mais cette fois sans le prix pour la sécurité
 class Cartproduct {
-  constructor(id, quantity, color, imageUrl, name){
+  constructor(id, quantity, color, imageUrl, name, altTxt){
     this.id = id;
     this.quantity = quantity;
     this.color = color;
     this.imageUrl= imageUrl;
     this.name = name;
+    this.altTxt = altTxt;
     
     
   }
@@ -82,7 +86,7 @@ class Cartproduct {
 
 
 
-// fonction permettant d'ajouter le produit dans le panier donc le stocker sur le local storage
+// fonction permettant d'ajouter le produit dans le panier et  donc le stocker sur le local storage
 addToCart.onclick = () => {
   const quantitySelected = document.getElementById("quantity")
   const quantityValidation = quantitySelected.checkValidity()
@@ -91,7 +95,7 @@ addToCart.onclick = () => {
   //console.log(quantityValidation)
   if (colorValidation){
     if (quantityValidation){  
-      let productOfPage = new Cartproduct (productId, quantity.value, colors.value, produits[0].imageUrl, produits[0].name)
+      let productOfPage = new Cartproduct (productId, quantity.value, colors.value, produits[0].imageUrl, produits[0].name, produits[0].altTxt)
       let  productInCart = []
       if (localStorage.getItem("cart") !== null) {
         productInCart = JSON.parse(localStorage.getItem("cart"))
@@ -101,12 +105,14 @@ addToCart.onclick = () => {
       let foundColor = false
       let newQuantity = 0
       for (let product of productInCart) {
+        // vérification si le produit que l'utilisateur veux ajouter existe déjà dans le pannier et s'il est de la même couleur
         if (product.id == productId) {
           foundId = true
           if (product.color == productOfPage.color) {
             foundColor = true
             newQuantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
             console.log(newQuantity)
+            // verification si la somme des quantités de produit dans le pannier et celle dont l'utilisateur veut rajouter n'exède pas 100
             if (newQuantity > 100) {
               alert("La quantité maximale autorisée par produit est 100")
             }
