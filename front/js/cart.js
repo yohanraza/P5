@@ -18,7 +18,7 @@ let cartArticles = document.getElementsByClassName("cart__item__content__titlePr
 //console.log(cartArticles)
 displayPrice()
 
-// fonction permettant de recupérer le prix du produit dans le pannier
+// fonction permettant de recupérer le prix du produit (en fonction de sa quantitée) dans le pannier
 async function displayPrice () {
     for (let article of cartArticles) {
         let priceId = article.closest("article").dataset.id;
@@ -111,6 +111,8 @@ function CartTotalQuantity () {
     
 }
 
+//fonction permettant d'afficher le prix total du panier
+
 async function displayCartTotalPrice() {
     
     let cartTotalPrice = 0
@@ -176,6 +178,7 @@ for (let changeBtn of itemQuantity){
         let quantityChangeElt = changeBtn.closest("article")
         let quantityChangeEltColor = quantityChangeElt.dataset.color
         let quantityChangeEltId = quantityChangeElt.dataset.id
+        // on cherche l'index du produit qui correspond au bon id et a la bonne couleur pour pourvoir changer sa quantité
         let quantityChangeEltIndex = productInCart.findIndex(x => x.id === quantityChangeEltId && x.color === quantityChangeEltColor) 
         console.log(e.target.value)
         if (e.target.value <= 100 && e.target.value >= 1){ // Vérification si la quantitée est bien comprise entre 1 et 100 dans la page panier
@@ -228,7 +231,7 @@ function submitOrder () {
         alert("votre panier est vide")
     }
     else {
-        if(firstNameValue.match(regex1)){
+        if(firstNameValue.match(regex1)){ // verification du formulaire pour chaque entrée
             
             if(lastNameValue.match(regex1)){
                 
@@ -256,7 +259,7 @@ function submitOrder () {
                         }
                         else {
                             let alertEmail = document.getElementById("emailErrorMsg")
-                            alertEmail.innerHTML = 'Veuillez remplir le mail correctement' // en cas d'erreur une alerte s'affiche temporairement
+                            alertEmail.innerHTML = 'Veuillez remplir le mail correctement' // en cas d'erreur une alerte s'affiche temporairement pour indiquer le champ incorect 
                             setTimeout(()=> {alertEmail.innerHTML ="" }, 1500) // affiche l'alerte d'erreur temporairement (1,5 s)
                         }
                     }
@@ -310,7 +313,6 @@ function orderToSend(contact, products) {
     }
     //console.log(orderToSend)
     send(orderToSend)
-    //sendOrder(orderToSend)
 }
 
 // fonction permettant d'envoyer la commande 

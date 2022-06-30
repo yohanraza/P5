@@ -97,7 +97,7 @@ addToCart.onclick = () => {
     if (quantityValidation){  
       let productOfPage = new Cartproduct (productId, quantity.value, colors.value, produits[0].imageUrl, produits[0].name, produits[0].altTxt)
       let  productInCart = []
-      if (localStorage.getItem("cart") !== null) {
+      if (localStorage.getItem("cart") !== null) { //Si des produits existent deja dans le localstorage on les recupère dans la list productInCart
         productInCart = JSON.parse(localStorage.getItem("cart"))
       }
       
