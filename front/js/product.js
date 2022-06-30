@@ -87,8 +87,8 @@ addToCart.onclick = () => {
   const quantitySelected = document.getElementById("quantity")
   const quantityValidation = quantitySelected.checkValidity()
   const colorValidation = productColor.checkValidity()
-  console.log(colorValidation)
-  console.log(quantityValidation)
+  //console.log(colorValidation)
+  //console.log(quantityValidation)
   if (colorValidation){
     if (quantityValidation){  
       let productOfPage = new Cartproduct (productId, quantity.value, colors.value, produits[0].imageUrl, produits[0].name)
@@ -97,31 +97,39 @@ addToCart.onclick = () => {
         productInCart = JSON.parse(localStorage.getItem("cart"))
       }
       
-      var foundId = false
-      var foundColor = false
-      let Newquantity = 0
+      let foundId = false
+      let foundColor = false
+      let newQuantity = 0
       for (let product of productInCart) {
         if (product.id == productId) {
           foundId = true
           if (product.color == productOfPage.color) {
             foundColor = true
-            Newquantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
-            product.quantity = Newquantity
-            
+            newQuantity = parseInt(product.quantity) + parseInt(productOfPage.quantity)
+            console.log(newQuantity)
+            if (newQuantity > 100) {
+              alert("La quantité maximale autorisée par produit est 100")
+            }
+            else {
+            product.quantity = newQuantity
+            alert("La quantité a été mise à jour !")
+            }
           }
         }
       }
       
       if (foundId == true ){
         if (foundColor == true) {
-          console.log("ce produit existe")
+          //console.log("ce produit existe")
         }
         else {
           productInCart.push(productOfPage)
+          alert("Produit ajouté dans le panier")
         }
       } 
       else {
         productInCart.push(productOfPage)
+        alert("Produit ajouté dans le panier")
       }
       
       //console.log(foundId)
@@ -133,7 +141,7 @@ addToCart.onclick = () => {
       
       //console.log(productOfPage)
     }
-    else {alert("Veuillez selectionner une quantité")}  
+    else {alert("Veuillez selectionner une quantité comprise entre 1 et 100")}  
   }
   else {alert("Veuillez selectionner une couleur")}
 }

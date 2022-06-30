@@ -16,7 +16,7 @@ let cartArticles = document.getElementsByClassName("cart__item__content__titlePr
 //console.log(cartArticles)
 displayPrice()
 
-
+// fonction permettant de recupérer le prix du produit dans le pannier
 async function displayPrice () {
     for (let article of cartArticles) {
         let priceId = article.closest("article").dataset.id;
@@ -44,7 +44,7 @@ async function displayPrice () {
 }
 //fin draft
 
-// Fonction permettant d'afficher la liste de produit du pannier 
+// Fonction permettant d'afficher la liste de produits du pannier 
 function displayProduct() {
     if(productInCart === null || productInCart.length < 1 ) {
         cible.innerHTML+='<p>Votre pannier est vide </p>'
@@ -91,6 +91,8 @@ function displayProduct() {
 let cartTotalQuantity = 0
 let cartTotalPrice = 0
 let cartPriceList = []
+
+
 // Fonction permettant d'afficher la quantité de produit totale dans le pannier
 
 function CartTotalQuantity () {
@@ -174,14 +176,25 @@ for (let changeBtn of itemQuantity){
         let quantityChangeEltColor = quantityChangeElt.dataset.color
         let quantityChangeEltId = quantityChangeElt.dataset.id
         let quantityChangeEltIndex = productInCart.findIndex(x => x.id === quantityChangeEltId && x.color === quantityChangeEltColor)
-        productInCart[quantityChangeEltIndex].quantity = e.target.value;
-        localStorage.setItem('cart', JSON.stringify(productInCart))
+        console.log(e.target.value)
+        if (e.target.value <= 100 && e.target.value >= 1){
+            productInCart[quantityChangeEltIndex].quantity = e.target.value;
+            localStorage.setItem('cart', JSON.stringify(productInCart))
+            
+            let totalPrice = document.getElementsByClassName("cart__item__content__titlePrice")
+            let itemTotalPrice = totalPrice.lastChild
+            displayPrice()
+            displayCartTotalPrice();
+            CartTotalQuantity();
+        }
+
+        else if (e.target.value > 100) (
+            alert("pas plus de 100 article !")
+        )
         
-        let totalPrice = document.getElementsByClassName("cart__item__content__titlePrice")
-        let itemTotalPrice = totalPrice.lastChild
-        displayPrice()
-        displayCartTotalPrice();
-        CartTotalQuantity();
+        else if (e.target.value < 1  ) {
+            alert("veuillez choisir au moins une quantité superieur à 1")
+        }
         //console.log(totalPrice)
         //console.log(itemTotalPrice) 
     }
@@ -200,7 +213,8 @@ let email = document.getElementById("email");
 
 
 // regex1 correspond au regex qui va servir a valider le nom prénom et la ville sachant qu'ils ont le même format 
-let regex1 =/(^[a-zA-Z ]+$)/ ;
+// regex qui permet de rajouter certains caractères spéciaux pour les prénoms, noms et villes
+let regex1 =/(^[a-zA-Z àâäéèêëïîôöùûüÿç]+$)/ ; 
 let regexEmail = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/ ; 
 let regexAdress = /(^[a-z1-9A-Z ]+$)/;
 
@@ -212,28 +226,67 @@ function submitOrder () {
     let cityValue = city.value;
     let emailValue = email.value;
     
-    if (firstNameValue.match(regex1) && lastNameValue.match(regex1) && cityValue.match(regex1) && addressValue.match(regexAdress) && emailValue.match(regexEmail)) {
-        class contactToSend {
-            constructor(firstName, lastName, address, city, email){
-                this.firstName = firstName;
-                this.lastName = lastName;
-                this.address = address;
-                this.city = city; 
-                this.email = email;
+    if(firstNameValue.match(regex1)){
+    
+        if(lastNameValue.match(regex1)){
+            
+            if( addressValue.match(regexAdress)){
+                
+                if (cityValue.match(regex1)) {
+                    
+                    if(emailValue.match(regexEmail)){
+                        class contactToSend {
+                            constructor(firstName, lastName, address, city, email){
+                                this.firstName = firstName;
+                                this.lastName = lastName;
+                                this.address = address;
+                                this.city = city; 
+                                this.email = email;
+                            }
+                        }
+                        
+                        let contact = new contactToSend(firstName.value, lastName.value, address.value, city.value, email.value)
+                        let products = []
+                        //console.log(contact);
+                        cartStringIdList(products);
+                        orderToSend(contact, products);
+                        //send(order);
+                        //fonction submit request post et blablabla
+                        alert("commande envoyé")    
+                    }
+                    else {
+                        let alertEmail = document.getElementById("emailErrorMsg")
+                        alertEmail.innerHTML = 'Veuillez remplir le mail correctement'
+                        setTimeout(()=> {alertEmail.innerHTML ="" }, 1500)
+                    }
+                }
+                else {
+                    let alertCity = document.getElementById("cityErrorMsg")
+                    alertCity.innerHTML = 'Veuillez remplir la ville correctement'
+                    setTimeout(()=> {alertCity.innerHTML ="" }, 1500)
+                }
+                
+            }
+            else {
+                let alertAdress = document.getElementById("addressErrorMsg")
+                alertAdress.innerHTML = `Veuillez remplir l'adresse correctement`
+                setTimeout(()=> {alertAdress.innerHTML ="" }, 1500)
             }
         }
+        else {
+            let alertLastName = document.getElementById("lastNameErrorMsg")
+            alertLastName.innerHTML = 'Veuillez remplir le Nom correctement'
+            setTimeout(()=> {alertLastName.innerHTML ="" }, 1500)
+        }
         
-        let contact = new contactToSend(firstName.value, lastName.value, address.value, city.value, email.value)
-        let products = []
-        //console.log(contact);
-        cartStringIdList(products);
-        orderToSend(contact, products);
-        //send(order);
-        //fonction submit request post et blablabla
-        alert("commande envoyé")
     }
+    
     else {
-        alert("Veuillez remplir tous les champs correctement !");
+        let alertFirstName = document.getElementById("firstNameErrorMsg")
+        alertFirstName.innerHTML = 'Veuillez remplir le prénom correctement'
+        setTimeout(()=> {alertFirstName.innerHTML ="" }, 1500)
+        //setTimeout permet d'enlever l'alerte d'erreur au bout de 1,5 secondes
+
     }
 }
 
@@ -254,9 +307,9 @@ function orderToSend(contact, products) {
         contact,
         products
     }
-    console.log(orderToSend)
-    let banane = JSON.stringify(orderToSend)
-    console.log(banane)
+    //console.log(orderToSend)
+    //let banane = JSON.stringify(orderToSend)
+    //console.log(banane)
     send(orderToSend)
     //sendOrder(orderToSend)
 }
@@ -279,7 +332,7 @@ function send(orderToSend) {
 })
 
 .then(function(serverResponse) {
-    console.log(serverResponse);
+    //console.log(serverResponse);
     saveOrderId(serverResponse)
     //storeOrderId(serverResponse); 
 })
@@ -300,8 +353,3 @@ function saveOrderId (value) {
     localStorage.setItem('cart', JSON.stringify(productInCart))   
 }
 
-function displayOrderId (value) {
-    let cible = document.getElementById("orderId")
-    cible.innerHTML+= `${value.orderId}`
-    //console.log(value)
-}
